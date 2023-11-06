@@ -9,6 +9,8 @@ public class PlayerController : MonoBehaviour
     public bool isGrounded;
     public Transform groundCheck;
     public LayerMask whatIsGround;
+    public Vector3 respawnPosition;
+    public LevelManager theLevelManager;
 
     //These private values will not be accessible through the inspector in the Unity Engine.
     private Rigidbody2D myRigidBody;
@@ -20,6 +22,11 @@ public class PlayerController : MonoBehaviour
         //Automatically finds the attached component to the player
         myRigidBody = GetComponent<Rigidbody2D>();
         myAnim = GetComponent<Animator>();
+        //Finds an object in the scene with a PlayerController script attached to it.
+        theLevelManager = FindObjectOfType<LevelManager>();
+
+        //Setting the respawn position to our game start position. If our player dies before reaching a checkpoint, they will return to their start position.s
+        respawnPosition = transform.position;
     }
 
     // Update is called once per frame
@@ -64,4 +71,21 @@ public class PlayerController : MonoBehaviour
         myAnim.SetBool("Grounded", isGrounded);
     }
 
+    //Creating an OnTrigger function to manage our triggers in the world.
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        //Added an empty game object with the KillPlane tag to fire off when the player falls to their death.
+        if(other.tag == "KillPlane")
+        {
+            //Calling our Respawn function from our LevelManager script.
+            theLevelManager.Respawn();
+        }
+
+        //Added a sprite prefab w/ checkpoint tag when a player reaches a new milestone.
+        if(other.tag == "Checkpoint")
+        {
+            //Sets the new respawn position of the player to the Collider2D (in this case, our flag).
+            respawnPosition = other.transform.position;
+        }
+    }
 }
