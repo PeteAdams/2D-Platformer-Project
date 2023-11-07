@@ -7,6 +7,7 @@ public class LevelManager : MonoBehaviour
 
     public float waitToRespawn;
     public PlayerController thePlayer;
+    public GameObject deathSplosion;
 
     // Start is called before the first frame update
     void Start()
@@ -29,6 +30,8 @@ public class LevelManager : MonoBehaviour
     public IEnumerator RespawnCo()
     {
         thePlayer.gameObject.SetActive(false);
+
+        Instantiate(deathSplosion, thePlayer.transform.position, thePlayer.transform.rotation);
 
         yield return new WaitForSeconds(waitToRespawn);
 
