@@ -26,7 +26,9 @@ public class CheckpointController : MonoBehaviour
     {
         if(other.tag == "Player")
         {
+            //Once we confirm the player has collided with the flagpole, we change the sprite to the open flag.
             theSpriteRenderer.sprite = flagOpen;
+            //This becomes our new checkpoint, thus making the respawn point this transform.
             checkpointActive = true;
         }
     }
