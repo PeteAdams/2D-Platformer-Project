@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class HurtPlayer : MonoBehaviour
 {
-
+    public int damageToGive;
+    
     private LevelManager theLevelManager;
     
     // Start is called before the first frame update
@@ -23,7 +24,7 @@ public class HurtPlayer : MonoBehaviour
     {
         if(other.tag == "Player")
         {
-            theLevelManager.Respawn();
+            theLevelManager.HurtPlayer(damageToGive);
         }
     }
 }
