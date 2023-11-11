@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     public LayerMask whatIsGround;
     public Vector3 respawnPosition;
     public LevelManager theLevelManager;
+    public GameObject stompBox;
 
     //These private values will not be accessible through the inspector in the Unity Engine.
     private Rigidbody2D myRigidBody;
@@ -69,6 +70,15 @@ public class PlayerController : MonoBehaviour
         myAnim.SetFloat("Speed", Mathf.Abs(myRigidBody.velocity.x));
         //Here we simply assign our Grounded parameter to equal our Isgrounded variable in code. This will toggle the jump animation based on a boolean.
         myAnim.SetBool("Grounded", isGrounded);
+
+        if (myRigidBody.velocity.y < 0)
+        {
+            stompBox.SetActive(true);
+        }
+        else
+        { 
+            stompBox.SetActive(false); 
+        }
     }
 
     //Creating an OnTrigger function to manage our triggers in the world.

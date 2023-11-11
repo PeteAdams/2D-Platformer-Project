@@ -6,17 +6,19 @@ using UnityEngine.UI;
 public class LevelManager : MonoBehaviour
 {
 
+    //Public variables accessible through the Unity Engine.
     public float waitToRespawn;
     public PlayerController thePlayer;
     public GameObject deathSplosion;
     public int coinCount;
     public int maxHealth, healthCount;
     public Text coinText;
-
     public Image heart1, heart2, heart3;
     public Sprite heartFull, heartHalf, heartEmpty;
 
+    //Private variables unaccessable through the Unity Engine.
     private bool respawning;
+    private ResetOnRespawn[] objectsToReset;
 
     // Start is called before the first frame update
     void Start()
@@ -24,21 +26,31 @@ public class LevelManager : MonoBehaviour
         //Finds an object in the scene with a PlayerController script attached to it.
         thePlayer = FindObjectOfType<PlayerController>();
 
+        //When the game starts, we want to change the default text to "Coins: " then add our coin value. In this case, it will begin as 0.
         coinText.text = "Coins: " + coinCount;
 
+        //We have not taken any damage yet, so our health would naturally begin as our max health.
         healthCount = maxHealth;
+
+        //This holds the array of objects we want to reset once the player dies. Therefore, we find objects in the world with the ResetOnRespawn script attached.
+        objectsToReset = FindObjectsOfType<ResetOnRespawn>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        /*Since the player can get damaged throughout the game, we want to check for the moment our health goes to 0 or less. We use less than in case something damages us to -1 etc.
+        We also want to make sure our Respawning bool is set to false, to avoid circular Respawn logic.*/
         if(healthCount <= 0 && !respawning)
         {
+            //We call our Respawn function and CoRoutine once confirmed dead.
             Respawn();
+            //Our bool sets to true so we can complete our CoRoutine without accidentally spamming the same logic overtop one another.
             respawning = true;
         }
     }
 
+    //We create a Respawn function to hold our CoRoutine logic, that way we can publically call the Respawn() to other scripts.
     public void Respawn()
     {
         //Starting the IEnumerator declared as the RespawnCo Co-Routine.
@@ -57,13 +69,27 @@ public class LevelManager : MonoBehaviour
         //As opposed to pausing the whole scene, and causing potential memory leaks or lags in the loop, we can use WaitForSeconds which keeps logic isolated to the player.
         yield return new WaitForSeconds(waitToRespawn);
 
+        //Since we've respawned, our health returns to max health as it is now treated as a new life.
         healthCount = maxHealth;
+        //Our bool is set back to false because we are alive again.
         respawning = false;
+        //We want to set our sprites back to indicate full health, so we call our switch case function UpdateHeartMeter for visual indication.
         UpdateHeartMeter();
+
+        //We've reset our progress, so our coin value becomes 0 again.
+        coinCount = 0;
+        //For visual indication on our UI, we also update our coin value back to 0.
+        coinText.text = "Coins: " + coinCount;
 
         //Once the waitToRespawn time has passed, we can throw the player back to their respawn position as specified in CheckPoint Controller, and return their active state to true.
         thePlayer.transform.position = thePlayer.respawnPosition;
         thePlayer.gameObject.SetActive(true);
+
+        for(int i = 0; i < objectsToReset.Length; i++)
+        {
+            objectsToReset[i].gameObject.SetActive(true);
+            objectsToReset[i].ResetObject();
+        }
     }
 
     public void AddCoins(int coinsToAdd)
