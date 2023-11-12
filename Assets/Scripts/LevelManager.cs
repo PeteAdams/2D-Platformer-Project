@@ -9,16 +9,17 @@ public class LevelManager : MonoBehaviour
     //Public variables accessible through the Unity Engine.
     public float waitToRespawn;
     public PlayerController thePlayer;
-    public GameObject deathSplosion;
-    public int coinCount;
-    public int maxHealth, healthCount;
-    public Text coinText;
+    public GameObject deathSplosion, gameOverScreen;
+    public int maxHealth, healthCount, coinCount, currentLives, startingLives, bonusLifeThreshold;
+    public Text coinText, livesText;
     public Image heart1, heart2, heart3;
     public Sprite heartFull, heartHalf, heartEmpty;
+    public bool invincible;
 
     //Private variables unaccessable through the Unity Engine.
     private bool respawning;
     private ResetOnRespawn[] objectsToReset;
+    private int coinBonusLifeCount;
 
     // Start is called before the first frame update
     void Start()
@@ -34,6 +35,10 @@ public class LevelManager : MonoBehaviour
 
         //This holds the array of objects we want to reset once the player dies. Therefore, we find objects in the world with the ResetOnRespawn script attached.
         objectsToReset = FindObjectsOfType<ResetOnRespawn>();
+
+        currentLives = startingLives;
+
+        livesText.text = "Lives x " + currentLives;
     }
 
     // Update is called once per frame
@@ -48,13 +53,35 @@ public class LevelManager : MonoBehaviour
             //Our bool sets to true so we can complete our CoRoutine without accidentally spamming the same logic overtop one another.
             respawning = true;
         }
+
+        if(coinBonusLifeCount >= bonusLifeThreshold)
+        {
+            currentLives += 1;
+            livesText.text = "Lives x " + currentLives;
+            coinBonusLifeCount -= bonusLifeThreshold;
+        }
     }
 
     //We create a Respawn function to hold our CoRoutine logic, that way we can publically call the Respawn() to other scripts.
     public void Respawn()
     {
-        //Starting the IEnumerator declared as the RespawnCo Co-Routine.
-        StartCoroutine("RespawnCo");
+        if(!respawning)
+        {
+            respawning = true;
+            currentLives -= 1;
+            livesText.text = "Lives x " + currentLives;
+
+            if (currentLives > 0)
+            {
+                //Starting the IEnumerator declared as the RespawnCo Co-Routine.
+                StartCoroutine("RespawnCo");
+            }
+            else
+            {
+                thePlayer.gameObject.SetActive(false);
+                gameOverScreen.SetActive(true);
+            }
+        }
     }
 
     //The Unity declaration for CoRoutine is called an IEnumerator, which sits parallel to the core loop but can pass its own logic in at its own time.
@@ -80,6 +107,8 @@ public class LevelManager : MonoBehaviour
         coinCount = 0;
         //For visual indication on our UI, we also update our coin value back to 0.
         coinText.text = "Coins: " + coinCount;
+        
+        coinBonusLifeCount = 0;
 
         //Once the waitToRespawn time has passed, we can throw the player back to their respawn position as specified in CheckPoint Controller, and return their active state to true.
         thePlayer.transform.position = thePlayer.respawnPosition;
@@ -95,13 +124,30 @@ public class LevelManager : MonoBehaviour
     public void AddCoins(int coinsToAdd)
     {
         coinCount += coinsToAdd;
+        coinBonusLifeCount += coinsToAdd;
 
         coinText.text = "Coins: " + coinCount;
     }
 
     public void HurtPlayer(int damageToTake)
     {
-        healthCount -= damageToTake;
+        if(!invincible)
+        {
+            healthCount -= damageToTake;
+            UpdateHeartMeter();
+            thePlayer.KnockBack();
+        }
+    }
+
+    public void GiveHealth(int healthToGive)
+    {
+        healthCount += healthToGive;
+
+        if(healthCount > maxHealth)
+        {
+            healthCount = maxHealth;
+        }
+
         UpdateHeartMeter();
     }
 
@@ -150,5 +196,11 @@ public class LevelManager : MonoBehaviour
                 heart3.sprite = heartEmpty;
                 return;
         }
+    }
+
+    public void AddLives(int livesToAdd)
+    {
+        currentLives += livesToAdd;
+        livesText.text = "Lives x " + currentLives;
     }
 }

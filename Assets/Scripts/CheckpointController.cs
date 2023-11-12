@@ -7,6 +7,7 @@ public class CheckpointController : MonoBehaviour
     //Public variables accessible through the Unity Engine.
     public bool checkpointActive;
     public Sprite flagClosed, flagOpen;
+    public GameObject checkpointSplosion;
 
     //Private variables unaccessable through the Unity Engine.
     private SpriteRenderer theSpriteRenderer;
@@ -27,13 +28,23 @@ public class CheckpointController : MonoBehaviour
     //Here we check if another collider makes contact with our flagpole.
     void OnTriggerEnter2D(Collider2D other)
     {
+        if (!checkpointActive)
+        {
+            StartCoroutine("CheckpointSplosion");
+        }
         //We want to check if the colliding entity is a player, because players are the only tags that can activate checkpoints.
-        if(other.tag == "Player")
+        if (other.tag == "Player")
         {
             //Once we confirm the player has collided with the flagpole, we change the sprite to the open flag. This is set in our public field in-engine.
             theSpriteRenderer.sprite = flagOpen;
             //This becomes our new checkpoint, thus making the respawn point this transform.
             checkpointActive = true;
         }
+    }
+
+    public IEnumerator CheckpointSplosion()
+    {
+            Instantiate(checkpointSplosion, gameObject.transform.position, gameObject.transform.rotation);
+            yield return new WaitForSeconds(0.1f);
     }
 }

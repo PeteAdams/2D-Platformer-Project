@@ -101,6 +101,7 @@ MonoBehaviour:
   checkpointActive: 0
   flagClosed: {fileID: -1768369037, guid: 1024fc08cb964de4598a02c19aaf367b, type: 3}
   flagOpen: {fileID: 1679724042, guid: 1024fc08cb964de4598a02c19aaf367b, type: 3}
+  checkpointSplosion: {fileID: 7145652925756066997, guid: 1396d1e7637da5b4ebc7ed9284f5bc0b, type: 3}
 --- !u!58 &754228913648933917
 CircleCollider2D:
   m_ObjectHideFlags: 0
