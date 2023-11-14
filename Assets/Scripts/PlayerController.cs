@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour
     public Vector3 respawnPosition;
     public LevelManager theLevelManager;
     public GameObject stompBox;
+    public AudioSource jumpSound, hurtSound;
 
     //These private values will not be accessible through the inspector in the Unity Engine.
     private Rigidbody2D myRigidBody;
@@ -66,6 +67,7 @@ public class PlayerController : MonoBehaviour
             {
                 //We assign a public value for jumpSpeed to indicate the velocity the player will jump on the Y axis. Everything else can keep the same velocity as previous.
                 myRigidBody.velocity = new Vector3(myRigidBody.velocity.x, jumpSpeed, 0f);
+                jumpSound.Play();
             }
         }
 

@@ -42,6 +42,9 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Background
+    uniqueID: 3641267371
+    locked: 0
   - name: World Objects
     uniqueID: 1805213827
     locked: 0

@@ -11,6 +11,7 @@ public class LevelManager : MonoBehaviour
     public PlayerController thePlayer;
     public GameObject deathSplosion, gameOverScreen;
     public int maxHealth, healthCount, coinCount, currentLives, startingLives, bonusLifeThreshold;
+    public AudioSource coinSound, levelMusic, gameOverMusic;
     public Text coinText, livesText;
     public Image heart1, heart2, heart3;
     public Sprite heartFull, heartHalf, heartEmpty;
@@ -80,6 +81,8 @@ public class LevelManager : MonoBehaviour
             {
                 thePlayer.gameObject.SetActive(false);
                 gameOverScreen.SetActive(true);
+                levelMusic.Stop(); 
+                gameOverMusic.Play();
             }
         }
     }
@@ -127,7 +130,9 @@ public class LevelManager : MonoBehaviour
         coinBonusLifeCount += coinsToAdd;
 
         coinText.text = "Coins: " + coinCount;
-    }
+
+        coinSound.Play();
+    } 
 
     public void HurtPlayer(int damageToTake)
     {
@@ -136,6 +141,7 @@ public class LevelManager : MonoBehaviour
             healthCount -= damageToTake;
             UpdateHeartMeter();
             thePlayer.KnockBack();
+            thePlayer.hurtSound.Play();
         }
     }
 
@@ -147,6 +153,8 @@ public class LevelManager : MonoBehaviour
         {
             healthCount = maxHealth;
         }
+
+        coinSound.Play();
 
         UpdateHeartMeter();
     }
@@ -202,5 +210,7 @@ public class LevelManager : MonoBehaviour
     {
         currentLives += livesToAdd;
         livesText.text = "Lives x " + currentLives;
+
+        coinSound.Play();
     }
 }
