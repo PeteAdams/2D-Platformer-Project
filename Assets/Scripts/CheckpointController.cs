@@ -8,6 +8,7 @@ public class CheckpointController : MonoBehaviour
     public bool checkpointActive;
     public Sprite flagClosed, flagOpen;
     public GameObject checkpointSplosion;
+    public AudioSource checkpointSound;
 
     //Private variables unaccessable through the Unity Engine.
     private SpriteRenderer theSpriteRenderer;
@@ -45,6 +46,8 @@ public class CheckpointController : MonoBehaviour
     public IEnumerator CheckpointSplosion()
     {
             Instantiate(checkpointSplosion, gameObject.transform.position, gameObject.transform.rotation);
+            checkpointSound.time = 0.4f;
+            checkpointSound.Play();
             yield return new WaitForSeconds(0.1f);
     }
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     //These public values will be accessible through the inspector in the Unity Engine.
-    public float moveSpeed, jumpSpeed, groundCheckRadius, knockbackForce, knockbackLength, invincibilityLength;
+    public float moveSpeed, jumpSpeed, groundCheckRadius, knockbackForce, knockbackLength, invincibilityLength, onPlatformSpeedModifier;
     public bool isGrounded;
     public Transform groundCheck;
     public LayerMask whatIsGround;
@@ -17,7 +17,8 @@ public class PlayerController : MonoBehaviour
     //These private values will not be accessible through the inspector in the Unity Engine.
     private Rigidbody2D myRigidBody;
     private Animator myAnim;
-    private float knockbackCounter, invincibilityCounter;
+    private float knockbackCounter, invincibilityCounter, activeMoveSpeed;
+    private bool onPlatform;
 
     // Start is called before the first frame update
     void Start()
@@ -30,6 +31,8 @@ public class PlayerController : MonoBehaviour
 
         //Setting the respawn position to our game start position. If our player dies before reaching a checkpoint, they will return to their start position.s
         respawnPosition = transform.position;
+
+        activeMoveSpeed = moveSpeed;
     }
 
     // Update is called once per frame
@@ -40,11 +43,19 @@ public class PlayerController : MonoBehaviour
 
         if (knockbackCounter <= 0)
         {
+            if(onPlatform)
+            {
+                activeMoveSpeed = moveSpeed * onPlatformSpeedModifier;
+            }
+            else
+            {
+                activeMoveSpeed = moveSpeed;
+            }
             //Utilizes input values as initialized by default in engine, Horizontal is recognized by A and D keys, therefore we can use a float value to indicate speed.
             if (Input.GetAxisRaw("Horizontal") > 0f)
             {
                 //If the speed is greater than 0, we want to move right. Rather than keeping Y value null, we want to keep the original gravity value so it will not interfere.
-                myRigidBody.velocity = new Vector3(moveSpeed, myRigidBody.velocity.y, 0f);
+                myRigidBody.velocity = new Vector3(activeMoveSpeed, myRigidBody.velocity.y, 0f);
                 //Since the game is 2D, we want to flip the sprite based on the direction he's looking. Since default animation is looking to the right, we can keep the scale as is.
                 transform.localScale = new Vector3(1f, 1f, 1f);
             }
@@ -52,7 +63,7 @@ public class PlayerController : MonoBehaviour
             {
                 /*If the speed is less than 0, we want to move to the left. Since unity recognizes the A key as a negative value, our move speed should be inverted by putting a - in
                 front of the moveSpeed value.*/
-                myRigidBody.velocity = new Vector3(-moveSpeed, myRigidBody.velocity.y, 0f);
+                myRigidBody.velocity = new Vector3(-activeMoveSpeed, myRigidBody.velocity.y, 0f);
                 //Since we're moving left, we can flip the scale of the sprite's X value to a -1. This will change the animation direction and provide player feedback of direction.
                 transform.localScale = new Vector3(-1f, 1f, 1f);
             }
@@ -141,6 +152,7 @@ public class PlayerController : MonoBehaviour
         if(other.gameObject.tag == "MovingPlatform")
         {
             transform.parent = other.transform;
+            onPlatform = true;
         }
     }
 
@@ -149,6 +161,7 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.tag == "MovingPlatform")
         {
             transform.parent = null;
+            onPlatform = false;
         }
     }
 }
