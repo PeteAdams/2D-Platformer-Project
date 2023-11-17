@@ -28,16 +28,27 @@ public class LevelManager : MonoBehaviour
         //Finds an object in the scene with a PlayerController script attached to it.
         thePlayer = FindObjectOfType<PlayerController>();
 
-        //When the game starts, we want to change the default text to "Coins: " then add our coin value. In this case, it will begin as 0.
-        coinText.text = "Coins: " + coinCount;
-
         //We have not taken any damage yet, so our health would naturally begin as our max health.
         healthCount = maxHealth;
 
         //This holds the array of objects we want to reset once the player dies. Therefore, we find objects in the world with the ResetOnRespawn script attached.
         objectsToReset = FindObjectsOfType<ResetOnRespawn>();
 
-        currentLives = startingLives;
+        if(PlayerPrefs.HasKey("CoinCount"))
+        {
+            coinCount = PlayerPrefs.GetInt("CoinCount");
+        }
+        //When the game starts, we want to change the default text to "Coins: " then add our coin value. In this case, it will begin as 0.
+        coinText.text = "Coins: " + coinCount;
+
+        if(PlayerPrefs.HasKey("PlayerLives"))
+        {
+            currentLives = PlayerPrefs.GetInt("PlayerLives");
+        }
+        else
+        {
+            currentLives = startingLives;
+        }
 
         livesText.text = "Lives x " + currentLives;
     }

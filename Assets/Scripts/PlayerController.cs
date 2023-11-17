@@ -6,16 +6,16 @@ public class PlayerController : MonoBehaviour
 {
     //These public values will be accessible through the inspector in the Unity Engine.
     public float moveSpeed, jumpSpeed, groundCheckRadius, knockbackForce, knockbackLength, invincibilityLength, onPlatformSpeedModifier;
-    public bool isGrounded;
+    public bool isGrounded, canMove;
     public Transform groundCheck;
     public LayerMask whatIsGround;
     public Vector3 respawnPosition;
     public LevelManager theLevelManager;
     public GameObject stompBox;
     public AudioSource jumpSound, hurtSound;
+    public Rigidbody2D myRigidBody;
 
     //These private values will not be accessible through the inspector in the Unity Engine.
-    private Rigidbody2D myRigidBody;
     private Animator myAnim;
     private float knockbackCounter, invincibilityCounter, activeMoveSpeed;
     private bool onPlatform;
@@ -33,6 +33,8 @@ public class PlayerController : MonoBehaviour
         respawnPosition = transform.position;
 
         activeMoveSpeed = moveSpeed;
+
+        canMove = true;
     }
 
     // Update is called once per frame
@@ -41,7 +43,7 @@ public class PlayerController : MonoBehaviour
         //Small circle initialized beneath the player which checks for collision. Position + radius colliding with the "Ground" tag as identified in engine public variable.
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, whatIsGround);
 
-        if (knockbackCounter <= 0)
+        if (knockbackCounter <= 0 && canMove)
         {
             if(onPlatform)
             {

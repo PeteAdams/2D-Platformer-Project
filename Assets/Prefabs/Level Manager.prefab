@@ -47,3 +47,22 @@ MonoBehaviour:
   waitToRespawn: 2
   thePlayer: {fileID: 0}
   deathSplosion: {fileID: 5552647693084737428, guid: 65222a9d2c7d059499842029c36e71ec, type: 3}
+  gameOverScreen: {fileID: 0}
+  maxHealth: 0
+  healthCount: 0
+  coinCount: 0
+  currentLives: 0
+  startingLives: 0
+  bonusLifeThreshold: 0
+  coinSound: {fileID: 0}
+  levelMusic: {fileID: 0}
+  gameOverMusic: {fileID: 0}
+  coinText: {fileID: 0}
+  livesText: {fileID: 0}
+  heart1: {fileID: 0}
+  heart2: {fileID: 0}
+  heart3: {fileID: 0}
+  heartFull: {fileID: 0}
+  heartHalf: {fileID: 0}
+  heartEmpty: {fileID: 0}
+  invincible: 0
