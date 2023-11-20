@@ -15,7 +15,7 @@ public class LevelManager : MonoBehaviour
     public Text coinText, livesText;
     public Image heart1, heart2, heart3;
     public Sprite heartFull, heartHalf, heartEmpty;
-    public bool invincible;
+    public bool invincible, respawnCoActive;
 
     //Private variables unaccessable through the Unity Engine.
     private bool respawning;
@@ -78,13 +78,13 @@ public class LevelManager : MonoBehaviour
     public void Respawn()
     {
         if(!respawning)
-        {
-            respawning = true;
+        { 
             currentLives -= 1;
             livesText.text = "Lives x " + currentLives;
 
             if (currentLives > 0)
             {
+                respawning = true;
                 //Starting the IEnumerator declared as the RespawnCo Co-Routine.
                 StartCoroutine("RespawnCo");
             }
@@ -101,6 +101,7 @@ public class LevelManager : MonoBehaviour
     //The Unity declaration for CoRoutine is called an IEnumerator, which sits parallel to the core loop but can pass its own logic in at its own time.
     public IEnumerator RespawnCo()
     {
+        respawnCoActive = true;
         //Once the player dies, we want to cancel all input and activity in the world from that game object.
         thePlayer.gameObject.SetActive(false);
 
@@ -109,6 +110,8 @@ public class LevelManager : MonoBehaviour
 
         //As opposed to pausing the whole scene, and causing potential memory leaks or lags in the loop, we can use WaitForSeconds which keeps logic isolated to the player.
         yield return new WaitForSeconds(waitToRespawn);
+
+        respawnCoActive = false;
 
         //Since we've respawned, our health returns to max health as it is now treated as a new life.
         healthCount = maxHealth;
