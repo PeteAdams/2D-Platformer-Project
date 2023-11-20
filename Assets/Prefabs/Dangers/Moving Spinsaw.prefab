@@ -81,7 +81,7 @@ MonoBehaviour:
   objectToMove: {fileID: 225079366106600212}
   startPoint: {fileID: 5244732232592660300}
   endPoint: {fileID: 7429736314192970248}
-  moveSpeed: 4
+  moveSpeed: 6
 --- !u!1 &9154207369160510847
 GameObject:
   m_ObjectHideFlags: 0
